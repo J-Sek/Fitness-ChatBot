@@ -19,7 +19,7 @@ namespace Fitness.ChatBot
         public const string HelpIntent = "Help";
         public const string NoneIntent = "None";
 
-        public static readonly string LuisConfiguration = "YOUR_LUIS_SERVICE_NAME";
+        public static readonly string LuisConfiguration = "FitnessChatBotHackathon_core-bot-LUIS";
 
         private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;

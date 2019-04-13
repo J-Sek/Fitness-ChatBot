@@ -10,68 +10,36 @@ This sample requires prerequisites in order to run.
 - [Required Prerequisites][41]
 
 # To try this sample
-- In a terminal, navigate to `<your_project_folder>/Fitness.ChatBot`
-    ```bash
-    # change into project folder
-	cd <your_project_folder>/Fitness.ChatBot
-    ```
-- Setup LUIS
 
-    Assuming prerequisites have been installed:
-    ```bash
-    # log into Azure
-    az login
-    ```
-    ```bash
-    # set you Azure subscription
-    az account set --subscription "<azure-subscription>"
-    ```
-    Before creating the Luis service application, is recommendable following the next steps:
+Assuming prerequisites have been installed:
+```bash
+# log into Azure
+az login
+```
+```bash
+# set you Azure subscription
+az account set --subscription "<azure-subscription>"
+```
+Before creating the Luis service application, is recommendable following the next steps:
 
-    - Delete the auto-generated .bot file, as the `msbot clone services` command can't update an existing file.
-    - As the command `msbot clone services` uses secret-manager to safely store the key generated for encrypting the bot file, it's necessary adding the next code in your Fitness.ChatBot.csproj file:
+- Delete the auto-generated .bot file, as the `msbot clone services` command can't update an existing file.
+- As the command `msbot clone services` uses secret-manager to safely store the key generated for encrypting the bot file, it's necessary adding the next code in your Fitness.ChatBot.csproj file:
 
-    ```
-        <PropertyGroup>
-            <UserSecretsId>GUID</UserSecretsId>
-        </PropertyGroup>
-    ```
-    **Note**: You can add any arbitrary `GUID` value for the `UserSecretsId` property, but you can not repeat `GUID` values among the projects, as they must be unique.
+```
+    <PropertyGroup>
+        <UserSecretsId>GUID</UserSecretsId>
+    </PropertyGroup>
+```
+**Note**: You can add any arbitrary `GUID` value for the `UserSecretsId` property, but you can not repeat `GUID` values among the projects, as they must be unique.
 
-    - Install Microsoft.Extensions.Configuration.UserSecrets NuGet package
+- Install Microsoft.Extensions.Configuration.UserSecrets NuGet package
 
-    ```bash
-    # Create LUIS service application
-    msbot clone services --name "Fitness.ChatBot" --luisAuthoringKey <LUIS-authoring-key> --code-dir "." --location westus --sdkLanguage "CSharp" --folder deploymentScripts/msbotClone --verbose
-    ```
+```bash
+# Create LUIS service application
+msbot clone services --name "FitnessChatBotHackathon" --luisAuthoringKey <???> --code-dir "." --location westus --sdkLanguage "CSharp" --folder deploymentScripts/msbotClone --verbose
+```
 
-    **Note**: Once the Luis service application is created, change the value of `LuisConfiguration` variable in FitnessBot.cs with the Luis service name, which can be found in Fitness.ChatBot.bot file (it should be `Fitness.ChatBot_core-bot-LUIS`).
-
-- Run the bot from a terminal or from Visual Studio, choose option A or B.
-
-	A) From a terminal
-	```bash
-	# run the bot
-	dotnet run
-	```
-
-	B) Or from Visual Studio
-	- Launch Visual Studio
-	- File -> Open -> Project/Solution
-	- Navigate to `<your_project_folder>/Fitness.ChatBot` folder
-	- Select `Fitness.ChatBot.csproj` file
-	- Press `F5` to run the project
-
-# Testing the bot using Bot Framework Emulator **v4**
-[Bot Framework Emulator][5] is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
-
-- Install the Bot Framework Emulator version 4.2.0 or greater from [here][6]
-
-## Connect to the bot using Bot Framework Emulator **v4**
-- Launch Bot Framework Emulator
-- File -> Open Bot Configuration
-- Navigate to `<your_project_folder>/Fitness.ChatBot` folder
-- Select `Fitness.ChatBot.bot` file
+**Note**: Once the Luis service application is created, change the value of `LuisConfiguration` variable in FitnessBot.cs with the Luis service name, which can be found in Fitness.ChatBot.bot file (it should be `Fitness.ChatBot_core-bot-LUIS`).
 
 # Deploy the bot to Azure
 ## Prerequisites
@@ -81,18 +49,13 @@ This sample requires prerequisites in order to run.
 After creating the bot and testing it locally, you can deploy it to Azure to make it accessible from anywhere.  To deploy your bot to Azure:
 
 ```bash
-# login to Azure
 az login
-```
-
-```bash
-# set you Azure subscription
 az account set --subscription "<azure-subscription>"
 ```
 
 ```bash
 # provision Azure Bot Services resources to host your bot
-msbot clone services --name "Fitness.ChatBot" --code-dir "." --location westus --sdkLanguage "Csharp" --folder deploymentScripts/msbotClone --verbose
+msbot clone services --name "FitnessChatBotHackathon" --code-dir "." --location westus --sdkLanguage "Csharp" --folder deploymentScripts/msbotClone --verbose
 ```
 
 ### Publishing Changes to Azure Bot Service

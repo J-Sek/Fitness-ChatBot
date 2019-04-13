@@ -1,0 +1,13 @@
+version: '3'
+services:
+  ravendb:
+    image: ravendb/ravendb:ubuntu-latest
+    container_name: ravendb
+    ports:
+      - "8080:8080"
+      - "38888:38888"
+    volumes:
+      - D:\Work\RavenDB\FitnessBot:/opt/RavenDB/Server/RavenData
+    environment:
+      - RAVEN_License_Eula_Accepted=true
+      - RAVEN_IN_DOCKER=true

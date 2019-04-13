@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Fitness.ChatBot
 {
@@ -20,9 +22,21 @@ namespace Fitness.ChatBot
 #if DEBUG
                     logging.AddConsole();
 #endif
+//                    Rv.WithRaven(session =>
+//                    {
+//                        session.Store(new RavenDBSelfTest());
+//                        session.SaveChanges();
+//                    });
                 })
-                // .UseApplicationInsights()
+                .UseApplicationInsights()
                 .UseStartup<Startup>()
+                .UseSerilog()
                 .Build();
+    }
+
+    internal class RavenDBSelfTest
+    {
+        public string Id => $"{Created:O}";
+        public DateTime Created { get; set; } = DateTime.Now;
     }
 }

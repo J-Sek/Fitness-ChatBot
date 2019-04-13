@@ -1,5 +1,3 @@
-﻿using System;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,12 +8,12 @@ using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Fitness.ChatBot
 {
     public class Startup
     {
-        private ILoggerFactory _loggerFactory;
         private readonly bool _isProduction;
 
         public Startup(IHostingEnvironment env)
@@ -28,7 +26,10 @@ namespace Fitness.ChatBot
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            Configuration = builder.Build();
+            if (env.IsDevelopment()) 
+                builder.AddUserSecrets<Startup>();
+
+                Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -55,11 +56,20 @@ namespace Fitness.ChatBot
             {
                 options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
 
-                ILogger logger = _loggerFactory.CreateLogger<FitnessBot>();
+                Log.Logger = new LoggerConfiguration()
+                    .Enrich.FromLogContext()
+                    .MinimumLevel.Information()
+//                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+//                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .WriteTo.Console()
+# if DEBUG
+                    .WriteTo.Seq("http://localhost:5341")
+# endif
+                    .CreateLogger();
 
                 options.OnTurnError = async (context, exception) =>
                 {
-                    logger.LogError($"Exception : {exception}");
+                    Log.Error(exception, "OnTurnError");
                     await context.SendActivityAsync("Sorry, it looks like something went wrong.");
                 };
             });
