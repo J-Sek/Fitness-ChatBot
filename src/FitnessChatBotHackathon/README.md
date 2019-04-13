@@ -9,15 +9,21 @@ This bot has been created using [Bot Framework][1], it shows how to:
 This sample requires prerequisites in order to run.
 - [Required Prerequisites][41]
 
+## Reloading *.luis file after changes to *.lu files
+
+```bash
+npm i -g ludown
+```
+
+
+```bash
+ludown p toluis -l Dialogs -s -o DeploymentScripts\MsbotClone -i 0.2 -n "core-bot-LUIS" -d "FitnessChatBot" --out 34.luis
+```
+
 # To try this sample
 
-Assuming prerequisites have been installed:
 ```bash
-# log into Azure
 az login
-```
-```bash
-# set you Azure subscription
 az account set --subscription "<azure-subscription>"
 ```
 Before creating the Luis service application, is recommendable following the next steps:

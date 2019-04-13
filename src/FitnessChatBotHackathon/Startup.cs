@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Fitness.ChatBot.Utils;
 using Microsoft.AspNetCore.Builder;
@@ -26,16 +27,18 @@ namespace Fitness.ChatBot
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
-            if (env.IsDevelopment()) 
+            if (env.IsDevelopment())
                 builder.AddUserSecrets<Startup>();
 
-                Configuration = builder.Build();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureLogging();
+
             var secretKey = Configuration.GetSection("botFileSecret")?.Value;
             var botFilePath = Configuration.GetSection("botFilePath")?.Value;
 
@@ -55,24 +58,14 @@ namespace Fitness.ChatBot
             services.AddBot<FitnessBot>(options =>
             {
                 options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
-
-                Log.Logger = new LoggerConfiguration()
-                    .Enrich.FromLogContext()
-                    .MinimumLevel.Information()
-//                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-//                    .MinimumLevel.Override("System", LogEventLevel.Warning)
-                    .WriteTo.Console()
-# if DEBUG
-                    .WriteTo.Seq("http://localhost:5341")
-# endif
-                    .CreateLogger();
-
                 options.OnTurnError = async (context, exception) =>
                 {
                     Log.Error(exception, "OnTurnError");
                     await context.SendActivityAsync("Sorry, it looks like something went wrong.");
                 };
             });
+
+            return Registry.Configure(services, Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

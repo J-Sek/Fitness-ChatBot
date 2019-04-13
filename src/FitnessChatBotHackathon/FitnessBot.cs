@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Dialogs;
 using Fitness.ChatBot.Dialogs.Greeting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -14,26 +16,23 @@ namespace Fitness.ChatBot
 {
     public class FitnessBot : IBot
     {
-        public const string GreetingIntent = "Greeting";
-        public const string CancelIntent = "Cancel";
-        public const string HelpIntent = "Help";
-        public const string NoneIntent = "None";
-
         public static readonly string LuisConfiguration = "FitnessChatBotHackathon_core-bot-LUIS";
 
         private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
         private readonly UserState _userState;
         private readonly ConversationState _conversationState;
+        private readonly IEnumerable<IBotCommand> _botCommands;
         private readonly BotServices _services;
 
         private DialogSet Dialogs { get; set; }
 
-        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory)
+        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory, IEnumerable<IBotCommand> botCommands)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
+            _botCommands = botCommands;
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _dialogStateAccessor = _conversationState.CreateProperty<DialogState>(nameof(DialogState));
@@ -63,12 +62,10 @@ namespace Fitness.ChatBot
 
                 await UpdateGreetingState(luisResults, dc.Context);
 
-                var interrupted = await IsTurnInterruptedAsync(dc, topIntent);
-                if (interrupted)
+                if (await AcceptCommand(dc, topIntent))
                 {
                     await _conversationState.SaveChangesAsync(turnContext);
                     await _userState.SaveChangesAsync(turnContext);
-
                     return; // Bypass the dialog.
                 }
 
@@ -82,11 +79,11 @@ namespace Fitness.ChatBot
                         case DialogTurnStatus.Empty:
                             switch (topIntent)
                             {
-                                case GreetingIntent:
+                                case Intents.Greeting:
                                     await dc.BeginDialogAsync(nameof(GreetingDialog));
                                     break;
 
-                                case NoneIntent:
+                                case Intents.None:
                                 default:
                                     await dc.Context.SendActivityAsync("I didn't understand what you just said to me.");
                                     break;
@@ -128,41 +125,15 @@ namespace Fitness.ChatBot
             await _userState.SaveChangesAsync(turnContext);
         }
 
-        private async Task<bool> IsTurnInterruptedAsync(DialogContext dc, string topIntent)
+        private async Task<bool> AcceptCommand(DialogContext dc, string topIntent)
         {
-            switch (topIntent)
+            var command = _botCommands.FirstOrDefault(x => x.Intent == topIntent);
+            if (command == null)
             {
-                case CancelIntent:
-                {
-                    if (dc.ActiveDialog != null)
-                    {
-                        await dc.CancelAllDialogsAsync();
-                        await dc.Context.SendActivityAsync("Ok. I've canceled our last activity.");
-                    }
-                    else
-                    {
-                        await dc.Context.SendActivityAsync("I don't have anything to cancel.");
-                    }
-
-                    return true;
-                }
-                case HelpIntent:
-                {
-                    // TODO: Describe our bot capabilities
-
-                    await dc.Context.SendActivityAsync("Let me try to provide some help.");
-                    await dc.Context.SendActivityAsync("I understand greetings, being asked for help, or being asked to cancel what I am doing.");
-
-                    if (dc.ActiveDialog != null)
-                    {
-                        await dc.RepromptDialogAsync();
-                    }
-
-                    return true;
-                }
-                default:
-                    return false;
+                return false;
             }
+            await command.Handle(dc);
+            return true;
         }
 
         private Activity CreateResponse(Activity activity, Attachment attachment)
