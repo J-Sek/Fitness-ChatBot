@@ -12,12 +12,13 @@ This sample requires prerequisites in order to run.
 ## Reloading *.luis file after changes to *.lu files
 
 ```bash
-npm i -g ludown
+npm i -g ludown luis-api
 ```
 
 
 ```bash
 ludown p toluis -l Dialogs -s -o DeploymentScripts\MsbotClone -i 0.2 -n "core-bot-LUIS" -d "FitnessChatBot" --out 34.luis
+luis update application ...
 ```
 
 # To try this sample
