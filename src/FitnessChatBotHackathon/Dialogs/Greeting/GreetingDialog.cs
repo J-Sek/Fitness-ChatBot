@@ -83,7 +83,7 @@ namespace Fitness.ChatBot.Dialogs.Greeting
             var greetingState = await UserProfileAccessor.GetAsync(stepContext.Context);
 
             // if we have everything we need, greet user and return.
-            if (greetingState != null && !string.IsNullOrWhiteSpace(greetingState.Name) && !string.IsNullOrWhiteSpace(greetingState.City))
+            if (greetingState.Completed())
             {
                 return await GreetUser(stepContext);
             }
@@ -208,6 +208,10 @@ namespace Fitness.ChatBot.Dialogs.Greeting
 
             // Display their profile information and end dialog.
             await context.SendActivityAsync($"Hi {greetingState.Name}, from {greetingState.City}, nice to meet you!");
+
+            greetingState.LastGreeting = DateProvider.CurrentDateForBot;
+            await UserProfileAccessor.SetAsync(stepContext.Context, greetingState);
+
             return await stepContext.EndDialogAsync();
         }
     }

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Fitness.ChatBot.Dialogs;
+﻿using Fitness.ChatBot.Dialogs;
 using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Dialogs.Greeting;
-using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Fitness.ChatBot
 {
@@ -46,7 +45,7 @@ namespace Fitness.ChatBot
             {
                 throw new InvalidOperationException($"The bot configuration does not contain a service type of `luis` with the id `{LuisConfiguration}`.");
             }
-            
+
             Dialogs = new DialogSet(_dialogStateAccessor);
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor, loggerFactory));
             Dialogs.Add(new AnswerDialog(_answersStateAccessor));
@@ -85,8 +84,18 @@ namespace Fitness.ChatBot
                             switch (topIntent)
                             {
                                 case Intents.Greeting:
-                                    await dc.BeginDialogAsync(nameof(GreetingDialog));
-                                    //await dc.BeginDialogAsync(nameof(AnswerDialog));
+                                    var greetingState = await _greetingStateAccessor.GetAsync(turnContext, () => new GreetingState());
+
+                                    if (!greetingState.SayingGreetingRecently())
+                                    {
+                                        await dc.BeginDialogAsync(nameof(GreetingDialog));
+                                    }
+
+                                    if (greetingState.Completed())
+                                    {
+                                        await dc.BeginDialogAsync(nameof(AnswerDialog));
+                                    }
+
                                     break;
 
                                 case Intents.None:
@@ -145,7 +154,7 @@ namespace Fitness.ChatBot
         private Activity CreateResponse(Activity activity, Attachment attachment)
         {
             var response = activity.CreateReply();
-            response.Attachments = new List<Attachment>() {attachment};
+            response.Attachments = new List<Attachment>() { attachment };
             return response;
         }
 
@@ -171,8 +180,8 @@ namespace Fitness.ChatBot
                 var entities = luisResult.Entities;
 
                 // Supported LUIS Entities
-                string[] userNameEntities = {"userName", "userName_patternAny"};
-                string[] userLocationEntities = {"userLocation", "userLocation_patternAny"};
+                string[] userNameEntities = { "userName", "userName_patternAny" };
+                string[] userLocationEntities = { "userLocation", "userLocation_patternAny" };
 
                 // Update any entities
                 // Note: Consider a confirm dialog, instead of just updating.
@@ -182,7 +191,7 @@ namespace Fitness.ChatBot
                     if (entities[name] != null)
                     {
                         // Capitalize and set new user name.
-                        var newName = (string) entities[name][0];
+                        var newName = (string)entities[name][0];
                         greetingState.Name = char.ToUpper(newName[0]) + newName.Substring(1);
                         break;
                     }
@@ -193,7 +202,7 @@ namespace Fitness.ChatBot
                     if (entities[city] != null)
                     {
                         // Capitalize and set new city.
-                        var newCity = (string) entities[city][0];
+                        var newCity = (string)entities[city][0];
                         greetingState.City = char.ToUpper(newCity[0]) + newCity.Substring(1);
                         break;
                     }

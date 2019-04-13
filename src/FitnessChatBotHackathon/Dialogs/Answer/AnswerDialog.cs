@@ -62,6 +62,7 @@ namespace Fitness.ChatBot.Dialogs.Answer
             }
             else
             {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Ok, let me know when you are ready"), cancellationToken);
                 return await stepContext.CancelAllDialogsAsync(cancellationToken);
             }
         }
