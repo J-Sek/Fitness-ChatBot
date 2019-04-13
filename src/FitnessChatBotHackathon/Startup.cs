@@ -7,7 +7,6 @@ using Microsoft.Bot.Configuration;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Fitness.ChatBot
@@ -75,10 +74,8 @@ namespace Fitness.ChatBot
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            _loggerFactory = loggerFactory;
-
             app.UseDefaultFiles()
                 .UseStaticFiles()
                 .UseBotFramework();
