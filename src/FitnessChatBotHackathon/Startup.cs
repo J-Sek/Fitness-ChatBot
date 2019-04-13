@@ -1,4 +1,5 @@
 using System.Linq;
+using Fitness.ChatBot.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
@@ -46,7 +47,7 @@ namespace Fitness.ChatBot
             var environment = _isProduction ? "production" : "development";
             var endpointService = botConfig.Services.FirstOrDefault(s => s.Type == "endpoint" && s.Name == environment) as EndpointService;
 
-            var dataStore = new MemoryStorage(); // TODO: Set RavenDB
+            var dataStore = new RavenDbBotStorage();
 
             services.AddSingleton(new ConversationState(dataStore));
             services.AddSingleton(new UserState(dataStore));
