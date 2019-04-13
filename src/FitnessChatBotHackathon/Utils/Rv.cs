@@ -7,9 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Fitness.ChatBot.Dialogs.Answer;
-using Fitness.ChatBot.Dialogs.Greeting;
-using Microsoft.Bot.Builder.Dialogs;
 
 namespace Fitness.ChatBot.Utils
 {

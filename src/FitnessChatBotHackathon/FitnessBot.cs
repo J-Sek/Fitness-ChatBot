@@ -1,17 +1,17 @@
-﻿using Fitness.ChatBot.Dialogs;
-using Fitness.ChatBot.Dialogs.Answer;
-using Fitness.ChatBot.Dialogs.Greeting;
-using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Schema;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Dialogs;
+using Fitness.ChatBot.Dialogs.Answer;
+using Fitness.ChatBot.Dialogs.Greeting;
+using Fitness.ChatBot.Utils;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Schema;
+using Newtonsoft.Json;
 
 namespace Fitness.ChatBot
 {
@@ -25,16 +25,18 @@ namespace Fitness.ChatBot
         private readonly UserState _userState;
         private readonly ConversationState _conversationState;
         private readonly IEnumerable<IBotCommand> _botCommands;
+        private readonly ActiveConversationsStore _activeConversationsStore;
         private readonly BotServices _services;
 
         private DialogSet Dialogs { get; set; }
 
-        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory, IEnumerable<IBotCommand> botCommands)
+        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, IEnumerable<IBotCommand> botCommands, ActiveConversationsStore activeConversationsStore)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
             _botCommands = botCommands;
+            _activeConversationsStore = activeConversationsStore;
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
@@ -47,7 +49,7 @@ namespace Fitness.ChatBot
             }
 
             Dialogs = new DialogSet(_dialogStateAccessor);
-            Dialogs.Add(new GreetingDialog(_greetingStateAccessor, loggerFactory));
+            Dialogs.Add(new GreetingDialog(_greetingStateAccessor));
             Dialogs.Add(new AnswerDialog(_answersStateAccessor));
         }
 
@@ -56,6 +58,9 @@ namespace Fitness.ChatBot
             var activity = turnContext.Activity;
 
             var dc = await Dialogs.CreateContextAsync(turnContext);
+
+            var conversationReference = activity.GetConversationReference();
+            await _activeConversationsStore.Check(conversationReference);
 
             if (activity.Type == ActivityTypes.Message)
             {
@@ -89,6 +94,10 @@ namespace Fitness.ChatBot
                                     if (!greetingState.SayingGreetingRecently())
                                     {
                                         await dc.BeginDialogAsync(nameof(GreetingDialog));
+
+                                        var reply = activity.CreateReply(String.Empty);
+                                        reply.Type = ActivityTypes.Typing;
+                                        await dc.Context.SendActivityAsync(reply);
                                     }
 
                                     if (greetingState.Completed())
@@ -132,8 +141,13 @@ namespace Fitness.ChatBot
                             var response = CreateResponse(activity, welcomeCard);
                             await dc.Context.SendActivityAsync(response);
                         }
+                        else
+                        {
+                            await _activeConversationsStore.RemoveOldConversations(conversationReference.User.Id);
+                        }
                     }
                 }
+                await _activeConversationsStore.SaveReference(conversationReference);
             }
 
             await _conversationState.SaveChangesAsync(turnContext);
