@@ -45,7 +45,7 @@ This sample requires prerequisites in order to run.
     msbot clone services --name "Fitness.ChatBot" --luisAuthoringKey <LUIS-authoring-key> --code-dir "." --location westus --sdkLanguage "CSharp" --folder deploymentScripts/msbotClone --verbose
     ```
 
-    **Note**: Once the Luis service application is created, change the value of `LuisConfiguration` variable in Fitness.ChatBotBot.cs with the Luis service name, which can be found in Fitness.ChatBot.bot file (it should be `Fitness.ChatBot_core-bot-LUIS`).
+    **Note**: Once the Luis service application is created, change the value of `LuisConfiguration` variable in FitnessBot.cs with the Luis service name, which can be found in Fitness.ChatBot.bot file (it should be `Fitness.ChatBot_core-bot-LUIS`).
 
 - Run the bot from a terminal or from Visual Studio, choose option A or B.
 

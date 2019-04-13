@@ -1,11 +1,5 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-namespace Fitness.ChatBot
+﻿namespace Fitness.ChatBot.Dialogs.Greeting
 {
-    /// <summary>
-    /// User state properties for Greeting.
-    /// </summary>
     public class GreetingState
     {
         public string Name { get; set; }

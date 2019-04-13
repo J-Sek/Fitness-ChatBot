@@ -1,7 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -9,7 +6,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 
-namespace Fitness.ChatBot
+namespace Fitness.ChatBot.Dialogs.Greeting
 {
     /// <summary>
     /// Demonstrates the following concepts:
@@ -50,10 +47,10 @@ namespace Fitness.ChatBot
             // Add control flow dialogs
             var waterfallSteps = new WaterfallStep[]
             {
-                    InitializeStateStepAsync,
-                    PromptForNameStepAsync,
-                    PromptForCityStepAsync,
-                    DisplayGreetingStateStepAsync,
+                InitializeStateStepAsync,
+                PromptForNameStepAsync,
+                PromptForCityStepAsync,
+                DisplayGreetingStateStepAsync,
             };
             AddDialog(new WaterfallDialog(ProfileDialog, waterfallSteps));
             AddDialog(new TextPrompt(NamePrompt, ValidateName));
@@ -81,9 +78,7 @@ namespace Fitness.ChatBot
             return await stepContext.NextAsync();
         }
 
-        private async Task<DialogTurnResult> PromptForNameStepAsync(
-                                                WaterfallStepContext stepContext,
-                                                CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> PromptForNameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var greetingState = await UserProfileAccessor.GetAsync(stepContext.Context);
 
@@ -112,9 +107,7 @@ namespace Fitness.ChatBot
             }
         }
 
-        private async Task<DialogTurnResult> PromptForCityStepAsync(
-                                                        WaterfallStepContext stepContext,
-                                                        CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> PromptForCityStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // Save name, if prompted.
             var greetingState = await UserProfileAccessor.GetAsync(stepContext.Context);
@@ -144,9 +137,7 @@ namespace Fitness.ChatBot
             }
         }
 
-        private async Task<DialogTurnResult> DisplayGreetingStateStepAsync(
-                                                    WaterfallStepContext stepContext,
-                                                    CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> DisplayGreetingStateStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             // Save city, if prompted.
             var greetingState = await UserProfileAccessor.GetAsync(stepContext.Context);
