@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Fitness.ChatBot.Dialogs;
+using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Dialogs.Greeting;
+using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
@@ -19,6 +21,7 @@ namespace Fitness.ChatBot
         public static readonly string LuisConfiguration = "FitnessChatBotHackathon_core-bot-LUIS";
 
         private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
+        private readonly IStatePropertyAccessor<AnswerState> _answersStateAccessor;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
         private readonly UserState _userState;
         private readonly ConversationState _conversationState;
@@ -35,6 +38,7 @@ namespace Fitness.ChatBot
             _botCommands = botCommands;
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
+            _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
             _dialogStateAccessor = _conversationState.CreateProperty<DialogState>(nameof(DialogState));
 
             // TODO: LUIS configuration.
@@ -42,9 +46,10 @@ namespace Fitness.ChatBot
             {
                 throw new InvalidOperationException($"The bot configuration does not contain a service type of `luis` with the id `{LuisConfiguration}`.");
             }
-
+            
             Dialogs = new DialogSet(_dialogStateAccessor);
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor, loggerFactory));
+            Dialogs.Add(new AnswerDialog(_answersStateAccessor));
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken)
@@ -81,6 +86,7 @@ namespace Fitness.ChatBot
                             {
                                 case Intents.Greeting:
                                     await dc.BeginDialogAsync(nameof(GreetingDialog));
+                                    //await dc.BeginDialogAsync(nameof(AnswerDialog));
                                     break;
 
                                 case Intents.None:

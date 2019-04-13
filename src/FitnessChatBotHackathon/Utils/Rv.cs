@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Dialogs.Greeting;
 using Microsoft.Bot.Builder.Dialogs;
 
@@ -61,15 +62,14 @@ namespace Fitness.ChatBot.Utils
                 {
                     foreach (var change in changes)
                     {
-                        if (change.Value is ConcurrentDictionary<string, object> stateValue)
-                        {
-                            if (stateValue.Keys.All(key => key == nameof(GreetingState)))
-                                session.Store(new User {Id = change.Key, StateValue = stateValue});
-                            else if (stateValue.Keys.All(key => key == nameof(DialogState)))
-                                session.Store(new Conversation {Id = change.Key, StateValue = stateValue});
-                            else
-                                session.Store(new OtherContextData {Id = change.Key, StateValue = stateValue});
-                        }
+                        var data = change.Value as ConcurrentDictionary<string, object>;
+
+                        if(change.Key.Contains("/users/"))
+                            session.Store(new UserData {Id = change.Key, StateValue = data});
+                        else if(change.Key.Contains("/conversations/"))
+                            session.Store(new Conversation {Id = change.Key, StateValue = data});
+                        else
+                            session.Store(new OtherContextData {Id = change.Key, StateValue = data});
                     }
 
                     session.SaveChanges();
@@ -99,7 +99,7 @@ namespace Fitness.ChatBot.Utils
             public ConcurrentDictionary<string, object> StateValue { get; set; }
         }
 
-        public class User : EntityProxy
+        public class UserData : EntityProxy
         {
         }
         public class Conversation : EntityProxy
