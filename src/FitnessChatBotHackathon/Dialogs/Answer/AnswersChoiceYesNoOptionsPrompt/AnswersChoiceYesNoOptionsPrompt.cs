@@ -1,21 +1,23 @@
-﻿using System;
+﻿using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Bot.Builder;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Dialogs.Choices;
 
 namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
 {
+
     public abstract class AnswersChoiceYesNoOptionsPrompt : ICollectAnswers
     {
         protected readonly IStatePropertyAccessor<AnswerState> AnswersStateAccessor;
 
         protected abstract string QuestionText { get; }
-        protected virtual string QuestionPositive { get; } = QuestionPositiveRandom();
-        protected virtual string QuestionNegative { get; } = QuestionNegativeRandom();
+        protected virtual string MessageVeryGood { get; } = RandomVeryGoodMessage();
+        protected virtual string MessageVeryBad { get; } = RandomVeryBadMessage();
+        protected virtual string Neutral { get; } = RandomNeutralMessage();
 
         protected AnswersChoiceYesNoOptionsPrompt(IStatePropertyAccessor<AnswerState> answersStateAccessor)
         {
@@ -27,49 +29,70 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
             return await stepContext.PromptAsync("choiceYesNo", new PromptOptions
             {
                 Prompt = MessageFactory.Text(QuestionText),
-                Choices = new List<Choice>
-                {
-                    new Choice("Yes"){Synonyms = new List<string> {"Yea", "Of course", "Sure"}},
-                    new Choice("No"){Synonyms = new List<string> {"Nope", "Don't ask"}},
-                    new Choice("I don't want to tell you") {Synonyms = new List<string> { "go away" }},
-                },
+                Choices = QuestionChoices(),
                 RetryPrompt = MessageFactory.Text("Be honest and select one")
             }, cancellationToken);
         }
 
+        protected abstract List<Choice> QuestionChoices();
+
         public async Task<DialogTurnResult> ValidateStep(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var selectedChoice = stepContext.Result as FoundChoice;
-            var isPositiveAnswer = selectedChoice?.Value?.ToLower() == "yes";
-            
-            if (isPositiveAnswer)
+
+            switch (AnswerIdToScore((selectedChoice?.Index).GetValueOrDefault()))
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(QuestionPositive), cancellationToken);
+                case ActivityScore.VeryGood:
+                case ActivityScore.Good:
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(MessageVeryGood), cancellationToken);
+                    break;
+                case ActivityScore.Bad:
+                case ActivityScore.VeryBad:
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(MessageVeryBad), cancellationToken);
+                    break;
+
+                default:
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(Neutral), cancellationToken);
+                    break;
             }
-            else
-            {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(QuestionNegative), cancellationToken);
-            }
-            
-            
-            await UpdateInDatabase(stepContext, isPositiveAnswer);
-            
+
+            var score = (ActivityScore)selectedChoice.Index;
+            await UpdateInDatabase(stepContext, score);
+
             return await stepContext.NextAsync(result: null, cancellationToken: cancellationToken);
         }
 
-        private async Task UpdateInDatabase(WaterfallStepContext stepContext, bool isPositiveAnswer)
+        protected virtual ActivityScore AnswerIdToScore(int answerId)
+        {
+            switch (answerId)
+            {
+                case 0:
+                    return ActivityScore.VeryBad;
+                case 1:
+                    return ActivityScore.Bad;
+                case 3:
+                    return ActivityScore.Good;
+                case 4:
+                    return ActivityScore.VeryGood;
+                case 2:
+                default:
+                    return ActivityScore.Neutral;
+            }
+        }
+
+        private async Task UpdateInDatabase(WaterfallStepContext stepContext, ActivityScore score)
         {
             var answerState = await AnswersStateAccessor.GetAsync(stepContext.Context, () => null) ?? new AnswerState();
             var todaysAnswers = answerState.Questions.FirstOrDefault(a => a.Day == DateProvider.CurrentDateForBot);
-            UpdateActivityHandler(isPositiveAnswer, todaysAnswers);
+            UpdateActivityHandler(score, todaysAnswers);
 
             await AnswersStateAccessor.SetAsync(stepContext.Context, answerState);
         }
 
-        protected abstract void UpdateActivityHandler(bool isPositiveAnswer, QuestionsData todaysAnswers);
+        protected abstract void UpdateActivityHandler(ActivityScore isPositiveAnswer, QuestionsData todaysAnswers);
 
 
-        private static string QuestionPositiveRandom()
+        private static string RandomVeryGoodMessage()
         {
             var answers = new[]
             {
@@ -84,7 +107,7 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
             return SelectRandom(answers);
         }
 
-        private static string QuestionNegativeRandom()
+        private static string RandomVeryBadMessage()
         {
             var answers = new[]
             {
@@ -92,6 +115,16 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
                 "You can do better",
                 "Well, it happens",
                 "Learn to forgive yourself and... do not let me down next time ;-)"
+            };
+
+            return SelectRandom(answers);
+        }
+
+        private static string RandomNeutralMessage()
+        {
+            var answers = new[]
+            {
+                "Ok..."
             };
 
             return SelectRandom(answers);

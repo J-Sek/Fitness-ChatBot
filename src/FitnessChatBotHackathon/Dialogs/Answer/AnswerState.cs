@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt;
 
 namespace Fitness.ChatBot.Dialogs.Answer
 {
@@ -11,8 +12,18 @@ namespace Fitness.ChatBot.Dialogs.Answer
     public class QuestionsData
     {
         public DateTime Day { get; set; }
-        public bool Activity { get; set; }
-        public bool Food { get; set; }
-        public bool Sleep { get; set; }
+
+        public ActivityScore ActivityScore { get; set; }
+        public ActivityScore FoodScore { get; set; }
+        public ActivityScore SleepScore { get; set; }
+    }
+    
+    public enum ActivityScore
+    {
+        VeryBad = -2,
+        Bad = -1,
+        Neutral = 0,
+        Good = 1,
+        VeryGood = 2
     }
 }
