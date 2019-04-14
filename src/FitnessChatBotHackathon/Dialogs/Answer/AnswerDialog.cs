@@ -40,10 +40,10 @@ namespace Fitness.ChatBot.Dialogs.Answer
             CancellationToken cancellationToken)
         {
             var answerState = await AnswersStateAccessor.GetAsync(stepContext.Context, () => null) ?? new AnswerState();
-            var todaysAnswers = answerState.Questions.FirstOrDefault(a => a.Day == DateProvider.CurrentDateForBot);
+            var todaysAnswers = answerState.Questions.FirstOrDefault(a => a.Day == DateProvider.CurrentDateForBot.Date);
 
             if (todaysAnswers == null)
-                answerState.Questions.Add(new QuestionsData {Day = DateProvider.CurrentDateForBot});
+                answerState.Questions.Add(new QuestionsData {Day = DateProvider.CurrentDateForBot.Date});
 
             await AnswersStateAccessor.SetAsync(stepContext.Context, answerState, cancellationToken);
 

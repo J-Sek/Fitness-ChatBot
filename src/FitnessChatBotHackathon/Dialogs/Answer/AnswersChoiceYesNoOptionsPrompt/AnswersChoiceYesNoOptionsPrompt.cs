@@ -39,6 +39,7 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
         public async Task<DialogTurnResult> ValidateStep(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var selectedChoice = stepContext.Result as FoundChoice;
+            var selectedIndex = (selectedChoice?.Index).GetValueOrDefault();
 
             switch (AnswerIdToScore((selectedChoice?.Index).GetValueOrDefault()))
             {
@@ -56,7 +57,7 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
                     break;
             }
 
-            var score = (ActivityScore)selectedChoice.Index;
+            var score = AnswerIdToScore(selectedIndex);
             await UpdateInDatabase(stepContext, score);
 
             return await stepContext.NextAsync(result: null, cancellationToken: cancellationToken);
@@ -83,7 +84,7 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
         private async Task UpdateInDatabase(WaterfallStepContext stepContext, ActivityScore score)
         {
             var answerState = await AnswersStateAccessor.GetAsync(stepContext.Context, () => null) ?? new AnswerState();
-            var todaysAnswers = answerState.Questions.FirstOrDefault(a => a.Day == DateProvider.CurrentDateForBot);
+            var todaysAnswers = answerState.Questions.FirstOrDefault(a => a.Day == DateProvider.CurrentDateForBot.Date) ?? new QuestionsData();
             UpdateActivityHandler(score, todaysAnswers);
 
             await AnswersStateAccessor.SetAsync(stepContext.Context, answerState);
