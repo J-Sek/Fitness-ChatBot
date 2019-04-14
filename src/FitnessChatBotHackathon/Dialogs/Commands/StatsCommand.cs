@@ -1,4 +1,5 @@
 using Fitness.ChatBot.Dialogs.Answer;
+using Fitness.ChatBot.Dialogs.TargetSetup;
 using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -16,23 +17,23 @@ namespace Fitness.ChatBot.Dialogs.Commands
     {
         public string Intent { get; } = Intents.Stats;
 
-        private readonly UserState _userState;
-        private IStatePropertyAccessor<AnswerState> _answersStateAccessor;
+        private readonly IStatePropertyAccessor<AnswerState> _answersStateAccessor;
+        private readonly IStatePropertyAccessor<TargetSetupState> _targetSetupStateAccessor;
 
         public StatsCommand(UserState userState)
         {
-            _userState = userState;
-            _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
+            _answersStateAccessor = userState.CreateProperty<AnswerState>(nameof(AnswerState));
+            _targetSetupStateAccessor = userState.CreateProperty<TargetSetupState>(nameof(TargetSetupState));
         }
 
         public async Task Handle(DialogContext ctx)
         {
             var answerState = await _answersStateAccessor.GetAsync(ctx.Context);
+            var targets = await _targetSetupStateAccessor.GetAsync(ctx.Context) ?? new TargetSetupState();
 
             if ((answerState?.Questions.Count ?? 0) == 0)
             {
                 await ctx.Context.Senddd("You need to answer questions at least once");
-
             }
             else
             {
@@ -43,9 +44,9 @@ namespace Fitness.ChatBot.Dialogs.Commands
                 await ctx.Context.Senddd("These are your results from last 7 days:");
                 await ctx.Context.Senddd(string.Join("\n", new []
                 {
-                    $"- Activity Habits [target: 6] : avg. **{(lastWeek.Select(x => x.ActivityScore).Cast<int>().Average() * 5):0.0}**",
-                    $"- Food Habits [target: 5] : avg. **{(lastWeek.Select(x => x.FoodScore).Cast<int>().Average() * 5):0.0}**",
-                    $"- Sleep Habits [target: 8] : avg. **{(lastWeek.Select(x => x.SleepScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Activity Habits [target: **{targets.Activity}**] : avg. **{(lastWeek.Select(x => x.ActivityScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Food Habits [target: **{targets.Food}**] : avg. **{(lastWeek.Select(x => x.FoodScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Sleep Habits [target: **{targets.Sleep}**] : avg. **{(lastWeek.Select(x => x.SleepScore).Cast<int>().Average() * 5):0.0}**",
                 }));
 
                 if (allQuestions.Length > 3)
