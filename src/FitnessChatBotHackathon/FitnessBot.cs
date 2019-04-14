@@ -133,9 +133,8 @@ namespace Fitness.ChatBot
                     {
                         if (member.Id != activity.Recipient.Id)
                         {
-                            var welcomeCard = CreateAdaptiveCardAttachment();
-                            var response = CreateResponse(activity, welcomeCard);
-                            await dc.Context.SendActivityAsync(response);
+                            await dc.Context.Senddd("Welcome new user");
+                            await dc.Context.Senddd("Please, type **?** or **help** to list available commands");
                         }
                         else
                         {
@@ -159,26 +158,6 @@ namespace Fitness.ChatBot
             }
             await command.Handle(dc);
             return true;
-        }
-
-        private Activity CreateResponse(Activity activity, Attachment attachment)
-        {
-            var response = activity.CreateReply();
-            response.Attachments = new List<Attachment>() { attachment };
-            return response;
-        }
-
-        private Attachment CreateAdaptiveCardAttachment()
-        {
-            var adaptiveCard = File.ReadAllText(
-                Path.Combine(@".\Dialogs\Welcome\Resources", "welcomeCard.json")
-            );
-
-            return new Attachment
-            {
-                ContentType = "application/vnd.microsoft.card.adaptive",
-                Content = JsonConvert.DeserializeObject(adaptiveCard),
-            };
         }
 
         private async Task UpdateGreetingState(RecognizerResult luisResult, ITurnContext turnContext)

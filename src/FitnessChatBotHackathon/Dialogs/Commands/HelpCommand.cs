@@ -10,10 +10,13 @@ namespace Fitness.ChatBot.Dialogs.Commands
 
         public async Task Handle(DialogContext ctx)
         {
-            // TODO: Describe our bot capabilities
-
-            await ctx.Context.Senddd("Let me try to provide some help.");
-            await ctx.Context.Senddd("I understand greetings, being asked for help, or being asked to cancel what I am doing.");
+            await ctx.Context.Senddd("Here are some commands you could try:");
+            await ctx.Context.Senddd(@"
+- **start** - (optionally) you could prompt me to start daily questions
+- **stats** - I can print snapshot of your current statistics
+- **progress** - I can show you how your performance improved over time
+- **cancel** - Abort current conversation
+");
 
             if (ctx.ActiveDialog != null)
             {
