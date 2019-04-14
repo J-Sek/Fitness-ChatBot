@@ -1,10 +1,14 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Schema;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fitness.ChatBot.Dialogs.Commands
 {
@@ -63,11 +67,17 @@ namespace Fitness.ChatBot.Dialogs.Commands
                     {
                         //food is more important factor
                         await ctx.Context.Senddd("It seems that food very important factor for your trainings. Remember about importance of good sleep too.");
+                        await ctx.Context.Senddd("I found interesting article for you.");
+
+                        await ShowCardWithTip(ctx, SelectRandom(new []{"Sleep1.json", "Sleep2.json"}));
                     }
                     else
                     {
                         //sleep is more important factor
                         await ctx.Context.Senddd("Sleep is most important factor for your trainings. If you take care of your diet too you can get even further with your training results.");
+                        await ctx.Context.Senddd("I found article which might be interesting.");
+
+                        await ShowCardWithTip(ctx, SelectRandom(new []{"Food2.json", "Food2.json"}));
                     }
                 }
             }
@@ -76,6 +86,40 @@ namespace Fitness.ChatBot.Dialogs.Commands
             {
                 await ctx.RepromptDialogAsync();
             }
+        }
+
+        protected static string SelectRandom(string[] cardFileName)
+        {
+            var answerId = new Random().Next(0, cardFileName.Length);
+
+            return cardFileName[answerId];
+        }
+
+        private async Task ShowCardWithTip(DialogContext ctx, string cardFileName)
+        {
+            var card = CreateAdaptiveCardAttachment(cardFileName);
+            var response = CreateResponse(ctx.Context.Activity, card);
+            await ctx.Context.SendActivityAsync(response);
+        }
+
+        private Activity CreateResponse(Activity activity, Attachment attachment)
+        {
+            var response = activity.CreateReply();
+            response.Attachments = new List<Attachment>() { attachment };
+            return response;
+        }
+
+        private Attachment CreateAdaptiveCardAttachment(string cardFile)
+        {
+            var adaptiveCard = File.ReadAllText(
+                Path.Combine(@".\Dialogs\Welcome\Resources", cardFile)
+            );
+
+            return new Attachment
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCard),
+            };
         }
     }
 }

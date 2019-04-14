@@ -1,0 +1,53 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+      {
+        "type": "ColumnSet",
+        "columns": [
+          {
+            "type": "Column",
+            "width": 2,
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "Sleep"
+              },
+              {
+                "type": "TextBlock",
+                "text": "10 Tips to Get More Sleep",
+                "weight": "bolder",
+                "size": "extraLarge",
+                "spacing": "none"
+              },
+              {
+                "type": "TextBlock",
+                "text": "Are you getting enough sleep at night? According to the National Institutes of Health (NIH), about 70 million Americans have sleep problems that keep them awake when they want to sleep, and lead to drowsiness when they want to be alert (...)",
+                "size": "small",
+                "wrap": true
+              }
+            ]
+          },
+          {
+            "type": "Column",
+            "width": 1,
+            "items": [
+              {
+                "type": "Image",
+                "url": "https://www.cancer.org/latest-news/how-to-get-more-sleep/_jcr_content/par/textimage/image.img.jpg/1517934362753.jpg",
+                "size": "auto"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "More Info",
+        "url": "https://www.cancer.org/latest-news/how-to-get-more-sleep.html"
+      }
+    ]
+  }

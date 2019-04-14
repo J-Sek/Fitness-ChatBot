@@ -41,4 +41,22 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Dialogs\Welcome\Resources\Food2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Food1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Sleep2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Sleep1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\welcomeCard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

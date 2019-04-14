@@ -1,0 +1,53 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "body": [
+      {
+        "type": "ColumnSet",
+        "columns": [
+          {
+            "type": "Column",
+            "width": 2,
+            "items": [
+              {
+                "type": "TextBlock",
+                "text": "Food"
+              },
+              {
+                "type": "TextBlock",
+                "text": "Eating and exercise: 5 tips to maximize your workouts",
+                "weight": "bolder",
+                "size": "extraLarge",
+                "spacing": "none"
+              },
+              {
+                "type": "TextBlock",
+                "text": "Eating and exercise go hand in hand. When and what you eat can be important to how you feel when you exercise, whether it's a casual workout or training for a competition. Consider these eating and exercise tips (...)",
+                "size": "small",
+                "wrap": true
+              }
+            ]
+          },
+          {
+            "type": "Column",
+            "width": 1,
+            "items": [
+              {
+                "type": "Image",
+                "url": "https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/08/17/20/35/eating-exercise-cereal-8col.jpg?h=124&w=222&bc=eeeeec&as=1&hash=b81f3dfe6ec9be5c92431d4872cbf6240e6ab38e",
+                "size": "auto"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "Action.OpenUrl",
+        "title": "More Info",
+        "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/in-depth/exercise/art-20045506"
+      }
+    ]
+  }
