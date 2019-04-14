@@ -12,9 +12,9 @@ namespace Fitness.ChatBot.Utils
 {
     public class Rv
     {
-        private const string Database = "FitnessChatBot";
+        private const string Database = "FitnessChatBot-2";
         private static readonly string ServerUrl = Environment.GetEnvironmentVariable("FITNESSBOT_RAVENDB_ADDRESS");
-        internal static IDocumentStore NewConnection => new DocumentStore { Urls = new[] { ServerUrl }, Database = Database }.Initialize();
+        private static IDocumentStore NewConnection => new DocumentStore {Urls = new[] {ServerUrl}, Database = Database}.Initialize();
 
         public static void WithRaven(Action<IDocumentSession> action)
         {
