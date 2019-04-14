@@ -1,0 +1,53 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 2,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Food"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Healthy Eating - Simple Ways to Plan, Enjoy, and Stick to a Healthy Diet",
+              "weight": "bolder",
+              "size": "extraLarge",
+              "spacing": "none"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Healthy eating is not about strict dietary limitations, staying unrealistically thin, or depriving yourself of the foods you love. Rather, it’s about feeling great, having more energy, improving your health, and boosting your mood (...)",
+              "size": "small",
+              "wrap": true
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://www.helpguide.org/wp-content/uploads/2018/11/family-outdoor-food-spread-500.jpg",
+              "size": "auto"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "More Info",
+      "url": "https://www.helpguide.org/articles/healthy-eating/healthy-eating.htm"
+    }
+  ]
+}

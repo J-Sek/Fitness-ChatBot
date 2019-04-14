@@ -16,14 +16,14 @@
               },
               {
                 "type": "TextBlock",
-                "text": "7 Tips for the Best Sleep Ever",
+                "text": "4 ways to get better sleep",
                 "weight": "bolder",
                 "size": "extraLarge",
                 "spacing": "none"
               },
               {
                 "type": "TextBlock",
-                "text": "Surprising new tips to help you get the rest you crave (...)",
+                "text": "If you are having trouble sleeping or sleeping well, the following four techniques may help you sleep better (...)",
                 "size": "small",
                 "wrap": true
               }
@@ -35,7 +35,7 @@
             "items": [
               {
                 "type": "Image",
-                "url": "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fcdn-img.health.com%2Fsites%2Fdefault%2Ffiles%2Fstyles%2Fmedium_16_9%2Fpublic%2Fstyles%2Fmain%2Fpublic%2Fban-blackberry-bed-400x400.jpg%3Fitok%3D0CKWSnpG&q=85",
+                "url": "https://d2ebzu6go672f3.cloudfront.net/media/content/images/wakeup-bed-digital-clock-computer-morning-Death_to_stock_photography_Wake_Up_1.jpg",
                 "size": "auto"
               }
             ]
@@ -47,7 +47,7 @@
       {
         "type": "Action.OpenUrl",
         "title": "More Info",
-        "url": "https://www.health.com/health/gallery/0,,20407230,00.html"
+        "url": "https://www.health.harvard.edu/staying-healthy/4-ways-to-get-better-sleep"
       }
     ]
   }

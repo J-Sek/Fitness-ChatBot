@@ -1,0 +1,53 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": 2,
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "Food"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Best Diet Tips Ever - 22 Ways to Stay on Track",
+              "weight": "bolder",
+              "size": "extraLarge",
+              "spacing": "none"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Drink plenty of water or other calorie-free beverages. Be choosy about nighttime snacks. Enjoy your favorite foods (...)",
+              "size": "small",
+              "wrap": true
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": 1,
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/articles/health_tools/best_diet_tips_slideshow/getty_rf_photo_collage_of_multiple_small_meals.jpg",
+              "size": "auto"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "More Info",
+      "url": "https://www.webmd.com/diet/ss/slideshow-best-diet-tips-ever"
+    }
+  ]
+}

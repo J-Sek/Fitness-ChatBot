@@ -57,7 +57,7 @@ namespace Fitness.ChatBot
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor));
             Dialogs.Add(new AnswerDialog(_answersStateAccessor));
             Dialogs.Add(new TargetSetupDialog(_targetSetupStateAccessor));
-            Dialogs.Add(new AdviceDialog(_services.LuisServices[LuisConfiguration], _advice));
+            Dialogs.Add(new AdviceDialog(_services.LuisServices[LuisConfiguration], _advice, _greetingStateAccessor));
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken)

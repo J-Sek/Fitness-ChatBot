@@ -42,10 +42,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Dialogs\Welcome\Resources\Food4.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Food3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Dialogs\Welcome\Resources\Food2.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Dialogs\Welcome\Resources\Food1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Sleep4.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Dialogs\Welcome\Resources\Sleep3.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="Dialogs\Welcome\Resources\Sleep2.json">

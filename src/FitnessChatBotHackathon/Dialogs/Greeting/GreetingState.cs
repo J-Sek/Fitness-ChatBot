@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fitness.ChatBot.Dialogs.Greeting
 {
@@ -9,6 +10,8 @@ namespace Fitness.ChatBot.Dialogs.Greeting
         public string City { get; set; }
 
         public DateTime LastGreeting { get; set; }
+        
+        public List<string> DisplayedArticles { get; set; }
     }
 
     public static class GreetingStateExtensions

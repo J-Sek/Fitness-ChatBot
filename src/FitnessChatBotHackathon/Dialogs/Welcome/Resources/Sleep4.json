@@ -16,14 +16,14 @@
               },
               {
                 "type": "TextBlock",
-                "text": "7 Tips for the Best Sleep Ever",
+                "text": "Twelve Simple Tips to Improve Your Sleep",
                 "weight": "bolder",
                 "size": "extraLarge",
                 "spacing": "none"
               },
               {
                 "type": "TextBlock",
-                "text": "Surprising new tips to help you get the rest you crave (...)",
+                "text": "Falling asleep may seem like an impossible dream when you're awake at 3 a.m., but good sleep is more under your control than you might think (...)",
                 "size": "small",
                 "wrap": true
               }
@@ -35,7 +35,7 @@
             "items": [
               {
                 "type": "Image",
-                "url": "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fcdn-img.health.com%2Fsites%2Fdefault%2Ffiles%2Fstyles%2Fmedium_16_9%2Fpublic%2Fstyles%2Fmain%2Fpublic%2Fban-blackberry-bed-400x400.jpg%3Fitok%3D0CKWSnpG&q=85",
+                "url": "http://healthysleep.med.harvard.edu/_i/139.jpg",
                 "size": "auto"
               }
             ]
@@ -47,7 +47,7 @@
       {
         "type": "Action.OpenUrl",
         "title": "More Info",
-        "url": "https://www.health.com/health/gallery/0,,20407230,00.html"
+        "url": "http://healthysleep.med.harvard.edu/healthy/getting/overcoming/tips"
       }
     ]
   }

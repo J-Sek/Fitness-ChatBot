@@ -4,16 +4,19 @@ using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Fitness.ChatBot.Advice;
+using Fitness.ChatBot.Dialogs.Greeting;
 
 namespace Fitness.ChatBot.Dialogs.Commands
 {
     public class StatsCommand : IBotCommand
     {
         public string Intent { get; } = Intents.Stats;
-
+        
+        private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
         private readonly IStatePropertyAccessor<AnswerState> _answersStateAccessor;
         private readonly IStatePropertyAccessor<TargetSetupState> _targetSetupStateAccessor;
         private readonly IDisplayAdvice _displayAdvice;
@@ -21,6 +24,7 @@ namespace Fitness.ChatBot.Dialogs.Commands
         public StatsCommand(UserState userState, IDisplayAdvice displayAdvice)
         {
             _displayAdvice = displayAdvice;
+            _greetingStateAccessor = userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _answersStateAccessor = userState.CreateProperty<AnswerState>(nameof(AnswerState));
             _targetSetupStateAccessor = userState.CreateProperty<TargetSetupState>(nameof(TargetSetupState));
         }
@@ -58,6 +62,9 @@ namespace Fitness.ChatBot.Dialogs.Commands
                     var foodToActivity = spearmanMatrix.At(0, 2);
                     var sleepToActivity = spearmanMatrix.At(1, 2);
 
+                    var userState = await _greetingStateAccessor.GetAsync(ctx.Context);
+                    userState.DisplayedArticles = userState.DisplayedArticles ?? new List<string>();
+
                     if (Math.Abs(foodToActivity - sleepToActivity) < .30)
                     {
                         //rather equal
@@ -67,18 +74,16 @@ namespace Fitness.ChatBot.Dialogs.Commands
                     {
                         //food is more important factor
                         await ctx.Context.Senddd("It seems that food very important factor for your trainings. Remember about importance of good sleep too.");
-                        await ctx.Context.Senddd("I found interesting article for you.");
-
-                        await _displayAdvice.ShowSleepAdvice(ctx);
+                        await _displayAdvice.ShowSleepAdvice(ctx, userState.DisplayedArticles);
                     }
                     else
                     {
                         //sleep is more important factor
                         await ctx.Context.Senddd("Sleep is most important factor for your trainings. If you take care of your diet too you can get even further with your training results.");
-                        await ctx.Context.Senddd("I found article which might be interesting.");
-                        
-                        await _displayAdvice.ShowFoodAdvice(ctx);
+                        await _displayAdvice.ShowFoodAdvice(ctx, userState.DisplayedArticles);
                     }
+
+                    await _greetingStateAccessor.SetAsync(ctx.Context, userState);
                 }
             }
 
