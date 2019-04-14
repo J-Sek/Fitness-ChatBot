@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
@@ -172,7 +173,7 @@ namespace Fitness.ChatBot.Dialogs.Greeting
             }
             else
             {
-                await promptContext.Context.SendActivityAsync($"Names needs to be at least `{NameLengthMinValue}` characters long.");
+                await promptContext.Context.Senddd($"Names needs to be at least `{NameLengthMinValue}` characters long.");
                 return false;
             }
         }

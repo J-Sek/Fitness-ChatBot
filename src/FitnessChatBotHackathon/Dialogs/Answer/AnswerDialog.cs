@@ -4,6 +4,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Utils;
 
 namespace Fitness.ChatBot.Dialogs.Answer
 {
@@ -56,20 +57,20 @@ namespace Fitness.ChatBot.Dialogs.Answer
         {
             if ((bool)stepContext.Result)
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Good, let's start"), cancellationToken);
+                await stepContext.Context.Senddd(MessageFactory.Text("Good, let's start"));
                 //TODO: pass any data? (result param)
                 return await stepContext.NextAsync(result: null, cancellationToken: cancellationToken);
             }
             else
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Ok, let me know when you are ready"), cancellationToken);
+                await stepContext.Context.Senddd(MessageFactory.Text("Ok, let me know when you are ready"));
                 return await stepContext.CancelAllDialogsAsync(cancellationToken);
             }
         }
 
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text("That's all, thanks"), cancellationToken);
+            await stepContext.Context.Senddd(MessageFactory.Text("That's all, thanks"));
 
             return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
