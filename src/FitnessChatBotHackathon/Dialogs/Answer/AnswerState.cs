@@ -8,7 +8,7 @@ namespace Fitness.ChatBot.Dialogs.Answer
     {
         public List<QuestionsData> Questions { get; set; } = new List<QuestionsData>();
     }
-    
+
     public class QuestionsData
     {
         public DateTime Day { get; set; }
@@ -17,7 +17,7 @@ namespace Fitness.ChatBot.Dialogs.Answer
         public ActivityScore FoodScore { get; set; }
         public ActivityScore SleepScore { get; set; }
     }
-    
+
     public enum ActivityScore
     {
         VeryBad = -2,
