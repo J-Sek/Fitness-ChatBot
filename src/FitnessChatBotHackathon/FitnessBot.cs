@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +12,6 @@ using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
-using Newtonsoft.Json;
 
 namespace Fitness.ChatBot
 {
@@ -31,10 +29,11 @@ namespace Fitness.ChatBot
         private readonly ActiveConversationsStore _activeConversationsStore;
         private readonly IDisplayAdvice _advice;
         private readonly BotServices _services;
+        private readonly GreetingStateStore _greetingStateStore;
 
         private DialogSet Dialogs { get; set; }
 
-        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, IEnumerable<IBotCommand> botCommands, ActiveConversationsStore activeConversationsStore, IDisplayAdvice advice)
+        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, IEnumerable<IBotCommand> botCommands, ActiveConversationsStore activeConversationsStore, IDisplayAdvice advice, GreetingStateStore greetingStateStore)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
@@ -42,6 +41,7 @@ namespace Fitness.ChatBot
             _botCommands = botCommands;
             _activeConversationsStore = activeConversationsStore;
             _advice = advice;
+            _greetingStateStore = greetingStateStore;
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
@@ -76,7 +76,7 @@ namespace Fitness.ChatBot
                 var topScoringIntent = luisResults?.GetTopScoringIntent();
                 var topIntent = topScoringIntent.Value.intent;
 
-                await UpdateGreetingState(luisResults, dc.Context);
+                await _greetingStateStore.UpdateGreetingState(luisResults, dc.Context);
 
                 if (await AcceptCommand(dc, topIntent))
                 {
@@ -122,7 +122,6 @@ namespace Fitness.ChatBot
                                     await dc.BeginDialogAsync(nameof(AdviceDialog));
                                     break;
                                 
-                                case Intents.None:
                                 default:
                                     await dc.Context.Senddd("I didn't understand what you just said to me.");
                                     break;
@@ -177,48 +176,6 @@ namespace Fitness.ChatBot
             }
             await command.Handle(dc);
             return true;
-        }
-
-        private async Task UpdateGreetingState(RecognizerResult luisResult, ITurnContext turnContext)
-        {
-            if (luisResult.Entities != null && luisResult.Entities.HasValues)
-            {
-                // Get latest GreetingState
-                var greetingState = await _greetingStateAccessor.GetAsync(turnContext, () => new GreetingState());
-                var entities = luisResult.Entities;
-
-                // Supported LUIS Entities
-                string[] userNameEntities = { "userName", "userName_patternAny" };
-                string[] userLocationEntities = { "userLocation", "userLocation_patternAny" };
-
-                // Update any entities
-                // Note: Consider a confirm dialog, instead of just updating.
-                foreach (var name in userNameEntities)
-                {
-                    // Check if we found valid slot values in entities returned from LUIS.
-                    if (entities[name] != null)
-                    {
-                        // Capitalize and set new user name.
-                        var newName = (string)entities[name][0];
-                        greetingState.Name = char.ToUpper(newName[0]) + newName.Substring(1);
-                        break;
-                    }
-                }
-
-                foreach (var city in userLocationEntities)
-                {
-                    if (entities[city] != null)
-                    {
-                        // Capitalize and set new city.
-                        var newCity = (string)entities[city][0];
-                        greetingState.City = char.ToUpper(newCity[0]) + newCity.Substring(1);
-                        break;
-                    }
-                }
-
-                // Set the new values into state.
-                await _greetingStateAccessor.SetAsync(turnContext, greetingState);
-            }
         }
     }
 }
