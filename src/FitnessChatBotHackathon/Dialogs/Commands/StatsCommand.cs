@@ -47,9 +47,9 @@ namespace Fitness.ChatBot.Dialogs.Commands
                 await ctx.Context.Senddd("These are your results from last 7 days:");
                 await ctx.Context.Senddd(string.Join("\n", new []
                 {
-                    $"- Activity Habits [target: **{targets.Activity}**] : avg. **{(lastWeek.Select(x => x.ActivityScore).Cast<int>().Average() * 5):0.0}**",
-                    $"- Food Habits [target: **{targets.Food}**] : avg. **{(lastWeek.Select(x => x.FoodScore).Cast<int>().Average() * 5):0.0}**",
-                    $"- Sleep Habits [target: **{targets.Sleep}**] : avg. **{(lastWeek.Select(x => x.SleepScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Activity Habits [target: {targets.Activity}] : avg. **{(lastWeek.Select(x => x.ActivityScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Food Habits [target: {targets.Food}] : avg. **{(lastWeek.Select(x => x.FoodScore).Cast<int>().Average() * 5):0.0}**",
+                    $"- Sleep Habits [target: {targets.Sleep}] : avg. **{(lastWeek.Select(x => x.SleepScore).Cast<int>().Average() * 5):0.0}**",
                 }));
 
                 if (allQuestions.Length > 3)

@@ -62,9 +62,9 @@ namespace Fitness.ChatBot.Dialogs.Commands
                 await ctx.Context.Senddd($"These are your results from last {Math.Max(21, allQuestions.Length)} days:");
                 await ctx.Context.Senddd(string.Join("\n", new []
                     {
-                        $"- Activity Habits [target: **{targets.Activity}**]\n\n   - {string.Join("\n   - ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Food Habits [target: **{targets.Food}**]\n\n   - {string.Join("\n   - ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Sleep Habits [target: **{targets.Sleep}**]\n\n   - {string.Join("\n   - ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"Activity Habits [target: {targets.Activity}]\n\n- {string.Join("\n- ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"Food Habits [target: {targets.Food}]\n\n- {string.Join("\n- ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"Sleep Habits [target: {targets.Sleep}]\n\n- {string.Join("\n- ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
                     }));
             }
 
