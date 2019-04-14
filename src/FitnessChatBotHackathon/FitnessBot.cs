@@ -103,6 +103,10 @@ namespace Fitness.ChatBot
 
                                     break;
 
+                                case Intents.Start:
+                                    await dc.BeginDialogAsync(nameof(AnswerDialog));
+                                    break;
+                                
                                 case Intents.None:
                                 default:
                                     await dc.Context.Senddd("I didn't understand what you just said to me.");
