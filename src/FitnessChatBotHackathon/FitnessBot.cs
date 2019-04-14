@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Fitness.ChatBot.Advice;
 using Fitness.ChatBot.Dialogs;
 using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Dialogs.Greeting;
@@ -28,17 +29,19 @@ namespace Fitness.ChatBot
         private readonly ConversationState _conversationState;
         private readonly IEnumerable<IBotCommand> _botCommands;
         private readonly ActiveConversationsStore _activeConversationsStore;
+        private readonly IDisplayAdvice _advice;
         private readonly BotServices _services;
 
         private DialogSet Dialogs { get; set; }
 
-        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, IEnumerable<IBotCommand> botCommands, ActiveConversationsStore activeConversationsStore)
+        public FitnessBot(BotServices services, UserState userState, ConversationState conversationState, IEnumerable<IBotCommand> botCommands, ActiveConversationsStore activeConversationsStore, IDisplayAdvice advice)
         {
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
             _botCommands = botCommands;
             _activeConversationsStore = activeConversationsStore;
+            _advice = advice;
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
@@ -54,6 +57,7 @@ namespace Fitness.ChatBot
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor));
             Dialogs.Add(new AnswerDialog(_answersStateAccessor));
             Dialogs.Add(new TargetSetupDialog(_targetSetupStateAccessor));
+            Dialogs.Add(new AdviceDialog(_services.LuisServices[LuisConfiguration], _advice));
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken)
@@ -109,9 +113,13 @@ namespace Fitness.ChatBot
                                 case Intents.Start:
                                     await dc.BeginDialogAsync(nameof(AnswerDialog));
                                     break;
-
+                                    
                                 case Intents.Target:
                                     await dc.BeginDialogAsync(nameof(TargetSetupDialog));
+                                    break;
+
+                                case Intents.Advice:
+                                    await dc.BeginDialogAsync(nameof(AdviceDialog));
                                     break;
                                 
                                 case Intents.None:

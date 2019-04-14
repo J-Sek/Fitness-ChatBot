@@ -1,5 +1,7 @@
 using System;
+using Fitness.ChatBot.Advice;
 using Fitness.ChatBot.Dialogs;
+using Fitness.ChatBot.Dialogs.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -21,6 +23,8 @@ namespace Fitness.ChatBot
                     _.WithDefaultConventions();
                     _.AddAllTypesOf<IBotCommand>();
                 });
+
+                config.For<IDisplayAdvice>().Use<DisplayAdvice>();
 
                 config.For<ILogger>().Use(_ => Log.ForContext("service", "DataService", false));
 

@@ -8,6 +8,7 @@ namespace Fitness.ChatBot.Dialogs
         public const string Stats = "Stats";
         public const string Help = "Help";
         public const string None = "None";
+        public const string Advice = "Advice";
         public const string Progress = "Progress";
         public const string Target = "Target";
     }
