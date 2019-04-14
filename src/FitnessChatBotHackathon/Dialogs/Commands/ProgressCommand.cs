@@ -45,22 +45,24 @@ namespace Fitness.ChatBot.Dialogs.Commands
                     .Reverse()
                     .ToArray();
 
+                var baseWeek = (DateProvider.CurrentDateForBot.DayOfYear - 7 + (int)(new DateTime(2019,01,01).DayOfWeek)) / 7 + 1;
+
                 var activityTrend = last3Weeks
-                    .Select((x, i) => (week: i, value: x.averageActivity, change: i == 0 ? "" : ChangeOf(x.averageActivity, last3Weeks[i - 1].averageActivity)))
+                    .Select((x, i) => (week: baseWeek + i, value: x.averageActivity, change: i == 0 ? "●" : ChangeOf(x.averageActivity, last3Weeks[i - 1].averageActivity)))
                     .ToArray();
                 var foodTrend = last3Weeks
-                    .Select((x, i) => (week: i, value: x.averageActivity, change: i == 0 ? "" : ChangeOf(x.averageActivity, last3Weeks[i - 1].averageActivity)))
+                    .Select((x, i) => (week: baseWeek + i, value: x.averageFood, change: i == 0 ? "●" : ChangeOf(x.averageFood, last3Weeks[i - 1].averageFood)))
                     .ToArray();
                 var sleepTrend = last3Weeks
-                    .Select((x, i) => (week: i, value: x.averageActivity, change: i == 0 ? "" : ChangeOf(x.averageActivity, last3Weeks[i - 1].averageActivity)))
+                    .Select((x, i) => (week: baseWeek + i, value: x.averageSleep, change: i == 0 ? "●" : ChangeOf(x.averageSleep, last3Weeks[i - 1].averageSleep)))
                     .ToArray();
 
                 await ctx.Context.Senddd($"These are your results from last {Math.Max(21, allQuestions.Length)} days:");
                 await ctx.Context.Senddd(string.Join("\n", new []
                     {
-                        $"- Activity Habits [target: 6] \n  - \n{string.Join("\n   - ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Food Habits [target: 5] \n  - \n{string.Join("\n   - ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Sleep Habits [target: 8] \n  - \n{string.Join("\n   - ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Activity Habits [target: 6]\n\n   - {string.Join("\n   - ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Food Habits [target: 5]\n\n   - {string.Join("\n   - ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Sleep Habits [target: 8]\n\n   - {string.Join("\n   - ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
                     }));
             }
 
