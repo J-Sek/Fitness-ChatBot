@@ -10,7 +10,7 @@ namespace Fitness.ChatBot.Dialogs.Answer.AnswersChoiceYesNoOptionsPrompt
         {
         }
 
-        protected override string QuestionText { get; } = "Did you sleep well? Tell me [1] - not well up to [5] which means great";
+        protected override string QuestionText { get; } = "Did you sleep well?";
         protected override string MessageVeryGood { get; } = "That's great! Sleep is very important";
         protected override string MessageVeryBad { get; } = "It's not good, maybe later I could try searching for some tips for you";
 
