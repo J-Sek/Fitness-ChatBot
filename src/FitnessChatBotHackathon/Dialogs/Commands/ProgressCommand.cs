@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Fitness.ChatBot.Dialogs.Answer;
+using Fitness.ChatBot.Dialogs.TargetSetup;
 using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -12,18 +13,19 @@ namespace Fitness.ChatBot.Dialogs.Commands
     {
         public string Intent { get; } = Intents.Progress;
 
-        private readonly UserState _userState;
-        private IStatePropertyAccessor<AnswerState> _answersStateAccessor;
+        private readonly IStatePropertyAccessor<AnswerState> _answersStateAccessor;
+        private readonly IStatePropertyAccessor<TargetSetupState> _targetSetupStateAccessor;
 
         public ProgressCommand(UserState userState)
         {
-            _userState = userState;
-            _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
+            _answersStateAccessor = userState.CreateProperty<AnswerState>(nameof(AnswerState));
+            _targetSetupStateAccessor = userState.CreateProperty<TargetSetupState>(nameof(TargetSetupState));
         }
 
         public async Task Handle(DialogContext ctx)
         {
             var answerState = await _answersStateAccessor.GetAsync(ctx.Context);
+            var targets = await _targetSetupStateAccessor.GetAsync(ctx.Context) ?? new TargetSetupState();
 
             if ((answerState?.Questions.Count ?? 0) == 0)
             {
@@ -60,9 +62,9 @@ namespace Fitness.ChatBot.Dialogs.Commands
                 await ctx.Context.Senddd($"These are your results from last {Math.Max(21, allQuestions.Length)} days:");
                 await ctx.Context.Senddd(string.Join("\n", new []
                     {
-                        $"- Activity Habits [target: 6]\n\n   - {string.Join("\n   - ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Food Habits [target: 5]\n\n   - {string.Join("\n   - ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
-                        $"- Sleep Habits [target: 8]\n\n   - {string.Join("\n   - ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Activity Habits [target: **{targets.Activity}**]\n\n   - {string.Join("\n   - ", activityTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Food Habits [target: **{targets.Food}**]\n\n   - {string.Join("\n   - ", foodTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
+                        $"- Sleep Habits [target: **{targets.Sleep}**]\n\n   - {string.Join("\n   - ", sleepTrend.Select(x => $"{x.change} week {x.week}: **{x.value:0.0}**"))}",
                     }));
             }
 

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Fitness.ChatBot.Dialogs;
 using Fitness.ChatBot.Dialogs.Answer;
 using Fitness.ChatBot.Dialogs.Greeting;
+using Fitness.ChatBot.Dialogs.TargetSetup;
 using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -21,6 +22,7 @@ namespace Fitness.ChatBot
 
         private readonly IStatePropertyAccessor<GreetingState> _greetingStateAccessor;
         private readonly IStatePropertyAccessor<AnswerState> _answersStateAccessor;
+        private readonly IStatePropertyAccessor<TargetSetupState> _targetSetupStateAccessor;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateAccessor;
         private readonly UserState _userState;
         private readonly ConversationState _conversationState;
@@ -40,9 +42,9 @@ namespace Fitness.ChatBot
 
             _greetingStateAccessor = _userState.CreateProperty<GreetingState>(nameof(GreetingState));
             _answersStateAccessor = _userState.CreateProperty<AnswerState>(nameof(AnswerState));
+            _targetSetupStateAccessor = _userState.CreateProperty<TargetSetupState>(nameof(TargetSetupState));
             _dialogStateAccessor = _conversationState.CreateProperty<DialogState>(nameof(DialogState));
 
-            // TODO: LUIS configuration.
             if (!_services.LuisServices.ContainsKey(LuisConfiguration))
             {
                 throw new InvalidOperationException($"The bot configuration does not contain a service type of `luis` with the id `{LuisConfiguration}`.");
@@ -51,6 +53,7 @@ namespace Fitness.ChatBot
             Dialogs = new DialogSet(_dialogStateAccessor);
             Dialogs.Add(new GreetingDialog(_greetingStateAccessor));
             Dialogs.Add(new AnswerDialog(_answersStateAccessor));
+            Dialogs.Add(new TargetSetupDialog(_targetSetupStateAccessor));
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken)
@@ -105,6 +108,10 @@ namespace Fitness.ChatBot
 
                                 case Intents.Start:
                                     await dc.BeginDialogAsync(nameof(AnswerDialog));
+                                    break;
+
+                                case Intents.Target:
+                                    await dc.BeginDialogAsync(nameof(TargetSetupDialog));
                                     break;
                                 
                                 case Intents.None:

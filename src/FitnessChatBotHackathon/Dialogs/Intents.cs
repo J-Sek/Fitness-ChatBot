@@ -9,5 +9,6 @@ namespace Fitness.ChatBot.Dialogs
         public const string Help = "Help";
         public const string None = "None";
         public const string Progress = "Progress";
+        public const string Target = "Target";
     }
 }
