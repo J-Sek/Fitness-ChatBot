@@ -44,6 +44,7 @@ namespace Fitness.ChatBot.Controllers
         [Route("nextDay")]
         public async Task<IActionResult> TriggerDailyQuestions()
         {
+            DateProvider.CurrentDateForBot = DateProvider.CurrentDateForBot.AddDays(1);
             var conversations = await _activeConversationsStore.GetAll();
             foreach (var c in conversations)
             {
