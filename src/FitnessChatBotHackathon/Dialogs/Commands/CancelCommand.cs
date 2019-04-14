@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Fitness.ChatBot.Utils;
 using Microsoft.Bot.Builder.Dialogs;
 
 namespace Fitness.ChatBot.Dialogs.Commands
@@ -12,11 +13,11 @@ namespace Fitness.ChatBot.Dialogs.Commands
             if (ctx.ActiveDialog != null)
             {
                 await ctx.CancelAllDialogsAsync();
-                await ctx.Context.SendActivityAsync("Ok. I've canceled our last activity.");
+                await ctx.Context.Senddd("Ok. I've canceled our last activity.");
             }
             else
             {
-                await ctx.Context.SendActivityAsync("I don't have anything to cancel.");
+                await ctx.Context.Senddd("I don't have anything to cancel.");
             }
         }
     }

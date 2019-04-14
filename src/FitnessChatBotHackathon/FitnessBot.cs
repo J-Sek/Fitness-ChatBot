@@ -94,10 +94,6 @@ namespace Fitness.ChatBot
                                     if (!greetingState.SayingGreetingRecently())
                                     {
                                         await dc.BeginDialogAsync(nameof(GreetingDialog));
-
-                                        var reply = activity.CreateReply(String.Empty);
-                                        reply.Type = ActivityTypes.Typing;
-                                        await dc.Context.SendActivityAsync(reply);
                                     }
 
                                     if (greetingState.Completed())
@@ -109,7 +105,7 @@ namespace Fitness.ChatBot
 
                                 case Intents.None:
                                 default:
-                                    await dc.Context.SendActivityAsync("I didn't understand what you just said to me.");
+                                    await dc.Context.Senddd("I didn't understand what you just said to me.");
                                     break;
                             }
 

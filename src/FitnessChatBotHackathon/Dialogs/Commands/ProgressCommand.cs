@@ -4,13 +4,13 @@ using Microsoft.Bot.Builder.Dialogs;
 
 namespace Fitness.ChatBot.Dialogs.Commands
 {
-    public class StatsCommand : IBotCommand
+    public class ProgressCommand : IBotCommand
     {
-        public string Intent { get; } = Intents.Stats;
+        public string Intent { get; } = Intents.Progress;
 
         public async Task Handle(DialogContext ctx)
         {
-            await ctx.Context.Senddd("TODO: **STATS**");
+            await ctx.Context.Senddd("TODO: **Progress**");
 
             if (ctx.ActiveDialog != null)
             {
